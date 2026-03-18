@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ECODIGITAL - Questionário</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+  font-family: Arial;
+  margin:0;
+  background:#f0f8ff;
+}
+
+header{
+  background: linear-gradient(to right,#1565C0,#2E7D32);
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+
+.container{
+  max-width:700px;
+  margin:30px auto;
+  background:white;
+  padding:20px;
+  border-radius:10px;
+}
+
+.question{
+  font-size:20px;
+  margin-bottom:20px;
+}
+
+.option{
+  display:block;
+  margin:10px 0;
+  padding:10px;
+  background:#2E7D32;
+  color:white;
+  border:none;
+  border-radius:5px;
+  cursor:pointer;
+}
+
+.option:hover{
+  background:#1565C0;
+}
+
+#progress{
+  height:10px;
+  background:#ddd;
+  margin-bottom:20px;
+  border-radius:5px;
+}
+
+#progress-bar{
+  height:10px;
+  width:0%;
+  background:#2E7D32;
+  border-radius:5px;
+}
+
+#result{
+  text-align:center;
+  font-size:22px;
+  margin-top:20px;
+}
+
+button{
+  padding:10px;
+  margin-top:20px;
+  border:none;
+  background:#1565C0;
+  color:white;
+  border-radius:5px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🌱 ECODIGITAL</h1>
+<p>Um Futuro Sustentável</p>
+</header>
+
+<div class="container">
+
+<div id="progress"><div id="progress-bar"></div></div>
+
+<div id="quiz">
+<div id="question" class="question"></div>
+<div id="options"></div>
+</div>
+
+<div id="result"></div>
+<canvas id="chart"></canvas>
+<button onclick="restartQuiz()">Refazer Quiz</button>
+
+</div>
+
+<script>
+
+const questions = [
+"Você separa o lixo reciclável?",
+"Quanto tempo dura seu banho?",
+"Você evita desperdício de alimentos?",
+"Você apaga as luzes ao sair?",
+"Você utiliza transporte sustentável?",
+"Você participa de ações comunitárias?",
+"Você respeita a diversidade cultural?",
+"Você compartilha conhecimento?",
+"Você resolve conflitos com diálogo?",
+"Você incentiva práticas sustentáveis?",
+"Você acredita que a educação transforma?",
+"Você busca se atualizar com estudos?",
+"Você apoia iniciativas sociais?",
+"Você promove inclusão e igualdade?",
+"Você acredita no poder de pequenas atitudes?"
+];
+
+const options = [
+["Sempre","Às vezes","Raramente","Nunca"],
+["Até 5 min","6-10 min","11-20 min","Mais de 20 min"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"],
+["Sempre","Às vezes","Raramente","Nunca"]
+];
+
+let current = 0;
+let score = 0;
+
+function showQuestion(){
+  document.getElementById("question").innerText = questions[current];
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+  options[current].forEach((opt,index)=>{
+    const btn = document.createElement("button");
+    btn.innerText = opt;
+    btn.classList.add("option");
+    btn.onclick = ()=> selectOption(index);
+    optionsDiv.appendChild(btn);
+  });
+
+  updateProgress();
+}
+
+function selectOption(index){
+  score += (4 - index);
+  current++;
+
+  if(current < questions.length){
+    showQuestion();
+  } else {
+    showResult();
+  }
+}
+
+function updateProgress(){
+  let percent = (current / questions.length) * 100;
+  document.getElementById("progress-bar").style.width = percent + "%";
+}
+
+function showResult(){
+  document.getElementById("quiz").style.display="none";
+
+  let level="";
+
+  if(score<=15) level="🌱 Consciência Inicial";
+  else if(score<=30) level="🌿 Cidadão em Desenvolvimento";
+  else if(score<=45) level="🌳 Agente Social Sustentável";
+  else level="🌍 Transformador do Futuro";
+
+  document.getElementById("result").innerHTML =
+  "<p>Pontuação: "+score+"</p><p>"+level+"</p>";
+
+  new Chart(document.getElementById("chart"),{
+    type:"doughnut",
+    data:{
+      labels:["Pontuação","Restante"],
+      datasets:[{
+        data:[score,60-score]
+      }]
+    }
+  });
+}
+
+function restartQuiz(){
+  current=0;
+  score=0;
+  document.getElementById("quiz").style.display="block";
+  document.getElementById("result").innerHTML="";
+  document.getElementById("chart").getContext("2d").clearRect(0,0,500,500);
+  showQuestion();
+}
+
+showQuestion();
+
+</script>
+
+</body>
+</html>
